@@ -1,5 +1,8 @@
 # vue-tablegrid
 
+## Project status
+In developing
+
 ## Project setup
 ```
 npm install
