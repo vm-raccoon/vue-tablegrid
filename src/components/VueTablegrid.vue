@@ -423,18 +423,18 @@ export default {
         margin: 0px !important;
     }
 
-    span.move {
+    table span.move {
         display: inline-block;
         width: calc(100% - 16px);
         cursor: pointer;
         overflow-x: hidden;
     }
 
-    span.move > .up:after {
+    table span.move > .up:after {
         content: '\2191';
     }
 
-    span.move > .down:after {
+    table span.move > .down:after {
         content: '\2193';
     }
 
