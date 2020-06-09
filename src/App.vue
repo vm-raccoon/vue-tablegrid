@@ -25,17 +25,56 @@ export default {
         return {
             freezeFirstColumn: false,
             columns: [
-                { id: 'id', title: 'ID', width: 140 },
-                { id: 'firstName', title: 'First Name', width: 140 },
-                { id: 'lastName', title: 'Last Name', width: 140 },
-                { id: 'companyName', title: 'Company Name', width: 280 },
-                { id: 'address', title: 'Address', width: 280 },
-                { id: 'city', title: 'City', width: 140 },
-                { id: 'region', title: 'Region', width: 140 },
-                { id: 'postal', title: 'Postal Code', width: 140 },
-                { id: 'country', title: 'Country', width: 140 },
-                { id: 'phone', title: 'Phone', width: 140 },
-                { id: 'email', title: 'Email', width: 140 },
+                {
+                    id: 'id',
+                    title: 'ID',
+                    width: 140,
+                    visible: false,
+                }, {
+                    id: 'firstName',
+                    title: 'First Name',
+                    width: 140,
+                }, {
+                    id: 'lastName',
+                    title: 'Last Name',
+                    width: 140,
+                }, {
+                    id: 'companyName',
+                    title: 'Company Name',
+                    width: 280,
+                }, {
+                    id: 'address',
+                    title: 'Address',
+                    width: 280,
+                }, {
+                    id: 'city',
+                    title: 'City',
+                    width: 140,
+                }, {
+                    id: 'region',
+                    title: 'Region',
+                    width: 140,
+                }, {
+                    id: 'postal',
+                    title: 'Postal Code',
+                    width: 140,
+                }, {
+                    id: 'country',
+                    title: 'Country',
+                    width: 140,
+                }, {
+                    id: 'phone',
+                    title: 'Phone',
+                    width: 140,
+                }, {
+                    id: 'email',
+                    title: 'Email',
+                    width: 140,
+                }, {
+                    id: 'latlong',
+                    title: 'Email',
+                    width: 140,
+                },
             ],
             footer: {
                 id: 'ID',

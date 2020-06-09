@@ -4,7 +4,7 @@
                :class="{ freezeFirstColumn: freezeFirstColumn }">
             <thead name="thead" class="scrollsync" ref="thead" v-columns-resizable>
                 <tr ref="header">
-                    <th v-for="c in columns" :key="c.id"
+                    <th v-for="c in visibleColumns" :key="c.id"
                         :style="getWidthStyle(c.width)">
                         <span class="move" @click="sortColumn(c.id)">
                             {{ c.title }}
@@ -15,7 +15,7 @@
                     </th>
                 </tr>
                 <tr ref="filter" v-if="true">
-                    <th v-for="c in columns" :key="c.id"
+                    <th v-for="c in visibleColumns" :key="c.id"
                         :style="getWidthStyle(c.width)">
                         <input type="text" class="form-control" v-model="c.filter" />
                     </th>
@@ -23,20 +23,20 @@
             </thead>
             <tbody name="tbody" ref="tbody" @scroll="updateSyncedScroll">
                 <tr v-for="(r, i) in itemsFilteredSorted" :key="i">
-                    <td v-for="c in columns" :key="c.id"
+                    <td v-for="c in visibleColumns" :key="c.id"
                         :style="getWidthStyle(c.width)">
                         {{ r[c.id] }}
                     </td>
                 </tr>
                 <tr v-if="itemsFilteredSorted.length == 0" style="visibility: hidden;">
-                    <td v-for="c in columns" :key="c.id"
+                    <td v-for="c in visibleColumns" :key="c.id"
                         :style="getWidthStyle(c.width)">
                     </td>
                 </tr>
             </tbody>
             <tfoot name="tfoot" class="scrollsync" ref="tfoot" v-if="footer">
                 <tr>
-                    <th v-for="c in columns" :key="c.id"
+                    <th v-for="c in visibleColumns" :key="c.id"
                         :style="getWidthStyle(c.width)">
                         {{ footer[c.id] || '&nbsp;' }}
                     </th>
@@ -104,6 +104,14 @@ export default {
         };
     },
     computed: {
+        visibleColumns(){
+            return this.columns.filter((i) => {
+                if(i.visible === undefined){
+                    i.visible = true;
+                }
+                return i.visible;
+            });
+        },
         itemsFilteredSorted(){
             let filterValues = {};
 
@@ -318,144 +326,144 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-table.scrolling {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    width: 100%;
-    height: 100%;
-    border-collapse: collapse;
-    overflow: hidden;
-    /* Use this to create a "dead" area color if table is too wide for cells */
-    background-color: #ddd;
-    --dead-area-color: #ddd;
-}
+    table.scrolling {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        width: 100%;
+        height: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        /* Use this to create a "dead" area color if table is too wide for cells */
+        background-color: #ddd;
+        --dead-area-color: #ddd;
+    }
 
-table.scrolling thead,
-table.scrolling tfoot {
-    /* Grow automatically to fit content, don't shrink it proportionately to the body. */
-    flex: 0 0 auto;
-    display: block;
-    /* Horizontal scrolling, when allowed, is controlled by JS, not a scroll bar. */
-    overflow: hidden;
-}
+    table.scrolling thead,
+    table.scrolling tfoot {
+        /* Grow automatically to fit content, don't shrink it proportionately to the body. */
+        flex: 0 0 auto;
+        display: block;
+        /* Horizontal scrolling, when allowed, is controlled by JS, not a scroll bar. */
+        overflow: hidden;
+    }
 
-table.scrolling tbody {
-    display: block;
-    flex: 1 1 auto;
-    /* Disable all scrolling by default */
-    /*overflow: hidden;*/
-}
+    table.scrolling tbody {
+        display: block;
+        flex: 1 1 auto;
+        /* Disable all scrolling by default */
+        /*overflow: hidden;*/
+    }
 
-/* Turn on vertical scrolling for all elements so scroll bars take up the same space */
-table.scrolling.scrolly tbody,
-table.scrolling.scrolly thead.scrollsync,
-table.scrolling.scrolly tfoot.scrollsync {
-    overflow-y: scroll;
-    background-color: var(--dead-area-color);
-    scrollbar-base-color: var(--dead-area-color);
-    scrollbar-face-color: var(--dead-area-color);
-    scrollbar-highlight-color: var(--dead-area-color);
-    scrollbar-track-color: var(--dead-area-color);
-    scrollbar-arrow-color: var(--dead-area-color);
-    scrollbar-shadow-color: var(--dead-area-color);
-    scrollbar-darkshadow-color: var(--dead-area-color);
-}
+    /* Turn on vertical scrolling for all elements so scroll bars take up the same space */
+    table.scrolling.scrolly tbody,
+    table.scrolling.scrolly thead.scrollsync,
+    table.scrolling.scrolly tfoot.scrollsync {
+        overflow-y: scroll;
+        background-color: var(--dead-area-color);
+        scrollbar-base-color: var(--dead-area-color);
+        scrollbar-face-color: var(--dead-area-color);
+        scrollbar-highlight-color: var(--dead-area-color);
+        scrollbar-track-color: var(--dead-area-color);
+        scrollbar-arrow-color: var(--dead-area-color);
+        scrollbar-shadow-color: var(--dead-area-color);
+        scrollbar-darkshadow-color: var(--dead-area-color);
+    }
 
-/* Turn on horizontal scrolling for the body only */
-table.scrolling.scrollx tbody {
-    overflow-x: scroll;
-}
+    /* Turn on horizontal scrolling for the body only */
+    table.scrolling.scrollx tbody {
+        overflow-x: scroll;
+    }
 
-/*
-For Webkit, use "dead area" color to hide vertical scrollbar functions in the header and footer.
-Since WebKit supports CSS variables and style attributes don't support pseudo-classes, use variables.
-Display is set because otherwise Chrome ignores the other styling.
-TODO: on Chrome/Safari for Mac, scrollbars are not shown anyway and this creates an extra block. No impact on iOS Safari.
-*/
-table.scrolling.scrolly thead.scrollsync::-webkit-scrollbar,
-table.scrolling.scrolly tfoot.scrollsync::-webkit-scrollbar {
-    display: block;
-    background-color: var(--dead-area-color);
-}
-table.scrolling.scrolly thead.scrollsync::-webkit-scrollbar-track,
-table.scrolling.scrolly tfoot.scrollsync::-webkit-scrollbar-track {
-    background-color: var(--dead-area-color);
-}
+    /*
+    For Webkit, use "dead area" color to hide vertical scrollbar functions in the header and footer.
+    Since WebKit supports CSS variables and style attributes don't support pseudo-classes, use variables.
+    Display is set because otherwise Chrome ignores the other styling.
+    TODO: on Chrome/Safari for Mac, scrollbars are not shown anyway and this creates an extra block. No impact on iOS Safari.
+    */
+    table.scrolling.scrolly thead.scrollsync::-webkit-scrollbar,
+    table.scrolling.scrolly tfoot.scrollsync::-webkit-scrollbar {
+        display: block;
+        background-color: var(--dead-area-color);
+    }
+    table.scrolling.scrolly thead.scrollsync::-webkit-scrollbar-track,
+    table.scrolling.scrolly tfoot.scrollsync::-webkit-scrollbar-track {
+        background-color: var(--dead-area-color);
+    }
 
-/* IE11 adds an extra tbody, have to hide it. */
-table.scrolling tbody:nth-child(3) {
-    display: none;
-}
+    /* IE11 adds an extra tbody, have to hide it. */
+    table.scrolling tbody:nth-child(3) {
+        display: none;
+    }
 
-/* The one caveat to scrolling this way: a hard-set width is required. Can override in thead/tbody slot. */
-table.scrolling td,
-table.scrolling th {
-    border: 1px solid #ddd;
+    /* The one caveat to scrolling this way: a hard-set width is required. Can override in thead/tbody slot. */
+    table.scrolling td,
+    table.scrolling th {
+        border: 1px solid #ddd;
 
-    /* These must all be set the same in your overriding CSS */
-    width: 10em;
-    min-width: 10em;
-    max-width: 10em;
+        /* These must all be set the same in your overriding CSS */
+        width: 10em;
+        min-width: 10em;
+        max-width: 10em;
 
-    /* Important in case your data is too long for your cell */
-    overflow: hidden;
-    word-wrap: break-word;
-}
+        /* Important in case your data is too long for your cell */
+        overflow: hidden;
+        word-wrap: break-word;
+    }
 
-table.scrolling td {
-    background-color: #fff;
-}
+    table.scrolling td {
+        background-color: #fff;
+    }
 
-table.scrolling th {
-    background-color: #f7f7f7;
-}
+    table.scrolling th {
+        background-color: #f7f7f7;
+    }
 
-table {
-    margin: 0px !important;
-}
+    table {
+        margin: 0px !important;
+    }
 
-span.move {
-    display: inline-block;
-    width: calc(100% - 16px);
-    cursor: pointer;
-    overflow-x: hidden;
-}
+    span.move {
+        display: inline-block;
+        width: calc(100% - 16px);
+        cursor: pointer;
+        overflow-x: hidden;
+    }
 
-span.move > .up:after {
-    content: '\2191';
-}
+    span.move > .up:after {
+        content: '\2191';
+    }
 
-span.move > .down:after {
-    content: '\2193';
-}
+    span.move > .down:after {
+        content: '\2193';
+    }
 
-table.scrolling th span {
-    white-space: nowrap;
-}
+    table.scrolling th span {
+        white-space: nowrap;
+    }
 
-table.freezeFirstColumn thead tr,
-table.freezeFirstColumn tbody tr,
-table.freezeFirstColumn tfoot tr {
-    /*display: block;*/
-    width: min-content;
-}
+    table.freezeFirstColumn thead tr,
+    table.freezeFirstColumn tbody tr,
+    table.freezeFirstColumn tfoot tr {
+        /*display: block;*/
+        width: min-content;
+    }
 
-table.freezeFirstColumn thead td:first-child,
-table.freezeFirstColumn tbody td:first-child,
-table.freezeFirstColumn tfoot td:first-child,
-table.freezeFirstColumn thead th:first-child,
-table.freezeFirstColumn tbody th:first-child,
-table.freezeFirstColumn tfoot th:first-child {
-    position: sticky;
-    position: -webkit-sticky;
-    left: 0;
-    background-color: #f7f7f7;
-}
+    table.freezeFirstColumn thead td:first-child,
+    table.freezeFirstColumn tbody td:first-child,
+    table.freezeFirstColumn tfoot td:first-child,
+    table.freezeFirstColumn thead th:first-child,
+    table.freezeFirstColumn tbody th:first-child,
+    table.freezeFirstColumn tfoot th:first-child {
+        position: sticky;
+        position: -webkit-sticky;
+        left: 0;
+        background-color: #f7f7f7;
+    }
 
-.wrapper {
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-}
+    .wrapper {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
 </style>
